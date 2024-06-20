@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   node:
     image: nexusolo/aws:lastest
@@ -7,6 +9,10 @@ services:
       - reseau
     ports :
       - 3000:3000
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   http:
     image: nginx:1.25
@@ -18,6 +24,10 @@ services:
       - db
     networks:
       - reseau
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   db:
     image: postgres:13
@@ -32,5 +42,9 @@ services:
       # - ./data:/var/lib/postgresql/data
     networks:
       - reseau
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 networks:
   reseau:

@@ -1,26 +1,72 @@
 ---
-- name: Setup and configure the EC2 instance
-  hosts: web
+- name: Setup Docker Swarm Cluster
+  hosts: managers
   become: yes
   tasks:
-    - name: Update and upgrade apt packages
+    - name: Install Docker
       apt:
+        name: docker.io
+        state: present
         update_cache: yes
 
-    - name: Install necessary packages
+    - name: Install Docker compose
       apt:
-        name:
-          - git
-          - nginx
+        name: docker-compose
         state: present
+        update_cache: yes
 
-    - name: Start and enable nginx
+    - name: Install Python pip
+      apt:
+        name: python3-pip
+        state: present
+        update_cache: yes
+
+    - name: install jsondiff
+      shell: apt install python3-jsondiff
+
+    - name: Enable and start Docker service
       systemd:
-        name: nginx
-        state: started
+        name: docker
         enabled: yes
+        state: started
 
-    - name: Create a simple index.html
+    - name: Initialize Docker Swarm
+      shell: docker swarm init --advertise-addr {{ ansible_host }}
+      register: swarm_init_output
+      changed_when: "'Swarm initialized' in swarm_init_output.stdout"
+
+    - name: Extract join token for workers
+      shell: docker swarm join-token worker -q
+      register: worker_join_token
+
+    - name: Send docker-compose.yml to manager node
       copy:
-        dest: /usr/share/nginx/html/index.html
-        content: "<h1>Hello from Ansible managed instance!</h1>"
+        src: docker-compose.yml
+        dest: ./docker-compose.yml
+
+    - name: Create a docker stack
+      docker_stack:
+        state: present
+        name: mystack
+        compose:
+          - docker-compose.yml
+
+- name: Join workers to the swarm
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Enable and start Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Join Docker Swarm as worker
+      shell: docker swarm join --token {{ hostvars['manager']['worker_join_token'].stdout }} {{ hostvars['manager']['ansible_host'] }}:2377
+      when: hostvars['manager']['worker_join_token'].stdout != ""

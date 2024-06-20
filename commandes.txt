@@ -1,57 +1,11 @@
-// UTILITAIRE
+multipass launch -n swarm-manager --disk 4G
+multipass launch -n swarm-worker1 --disk 4G
+multipass launch -n swarm-worker2 --disk 4G
 
-multipass exec swarm-manager -- docker service ls
+multipass.exe ls            // copier les ip des instances dans le fichier inventory.ini
 
- multipass exec swarm-manager -- docker service rm myapp_node myapp_http myapp_db
+docker container run --rm -it ansible-container /bin/bash
+cat ~/.ssh/id_rsa.pub       //copier la clé ssh dans le fichier authorized_keys des instances
+nano ~/.ssh/authorized_keys
 
-
-
-// CREATION DES INSTANCES
-
-multipass launch -n swarm-manager
-multipass launch -n swarm-worker1
-multipass launch -n swarm-worker2
-
-for instance in swarm-manager swarm-worker1 swarm-worker2; do
-  multipass exec $instance -- sudo apt-get update
-  multipass exec $instance -- sudo apt-get install -y docker.io
-done
-
-
-// CONFIGURATION DES INSTANCES (AJOUT DU USER)
-
-multipass shell swarm-manager
-	sudo usermod -aG docker ubuntu
-	exit
-
-multipass shell swarm-worker1
-	sudo usermod -aG docker ubuntu
-	exit
-
-multipass shell swarm-worker2
-	sudo usermod -aG docker ubuntu
-	exit
-h
-// SUITE DES COMMANDES
-
-
-
-multipass exec swarm-manager -- docker swarm init --advertise-addr $(multipass info swarm-manager | grep IPv4 | awk '{print $2}')
-
-
-TOKEN=$(multipass exec swarm-manager -- docker swarm join-token worker -q)
-
-
-for worker in swarm-worker1 swarm-worker2; do
-  multipass exec $worker -- docker swarm join --token $TOKEN $(multipass info swarm-manager | grep IPv4 | awk '{print $2}'):2377
-done
-
-
-multipass transfer docker-compose.yml swarm-manager:/home/ubuntu/
-
-multipass transfer -r ./http swarm-manager:/home/ubuntu/
-
-multipass transfer -r  ./db swarm-manager:/home/ubuntu/
-
-multipass exec swarm-manager -- docker stack deploy -c /home/ubuntu/docker-compose.yml myapp
-
+ansible-playbook -i inventory.ini playbook.yml
