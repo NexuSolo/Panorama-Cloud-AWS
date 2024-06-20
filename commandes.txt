@@ -1,0 +1,57 @@
+// UTILITAIRE
+
+multipass exec swarm-manager -- docker service ls
+
+ multipass exec swarm-manager -- docker service rm myapp_node myapp_http myapp_db
+
+
+
+// CREATION DES INSTANCES
+
+multipass launch -n swarm-manager
+multipass launch -n swarm-worker1
+multipass launch -n swarm-worker2
+
+for instance in swarm-manager swarm-worker1 swarm-worker2; do
+  multipass exec $instance -- sudo apt-get update
+  multipass exec $instance -- sudo apt-get install -y docker.io
+done
+
+
+// CONFIGURATION DES INSTANCES (AJOUT DU USER)
+
+multipass shell swarm-manager
+	sudo usermod -aG docker ubuntu
+	exit
+
+multipass shell swarm-worker1
+	sudo usermod -aG docker ubuntu
+	exit
+
+multipass shell swarm-worker2
+	sudo usermod -aG docker ubuntu
+	exit
+h
+// SUITE DES COMMANDES
+
+
+
+multipass exec swarm-manager -- docker swarm init --advertise-addr $(multipass info swarm-manager | grep IPv4 | awk '{print $2}')
+
+
+TOKEN=$(multipass exec swarm-manager -- docker swarm join-token worker -q)
+
+
+for worker in swarm-worker1 swarm-worker2; do
+  multipass exec $worker -- docker swarm join --token $TOKEN $(multipass info swarm-manager | grep IPv4 | awk '{print $2}'):2377
+done
+
+
+multipass transfer docker-compose.yml swarm-manager:/home/ubuntu/
+
+multipass transfer -r ./http swarm-manager:/home/ubuntu/
+
+multipass transfer -r  ./db swarm-manager:/home/ubuntu/
+
+multipass exec swarm-manager -- docker stack deploy -c /home/ubuntu/docker-compose.yml myapp
+

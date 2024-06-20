@@ -1,10 +1,12 @@
 services:
   node:
-    image: nexusolo/aws:latest
+    image: nexusolo/aws:lastest
     depends_on:
       - http
     networks:
       - reseau
+    ports :
+      - 3000:3000
 
   http:
     image: nginx:1.25
