@@ -1,6 +1,6 @@
 services:
   node:
-    build: node/
+    image: nexusolo/aws:latest
     depends_on:
       - http
     networks:
