@@ -18,4 +18,6 @@ WORKDIR /playbooks
 # Copier les fichiers de playbook dans le conteneur
 COPY playbook/* ./
 
-# CMD ["ansible"]
+RUN chmod 400 myKey.pem
+
+# CMD ["ansible-playbook", "-i", "inventory.ini", "playbook.yml"]
