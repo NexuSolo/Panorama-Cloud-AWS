@@ -1,11 +1,26 @@
-multipass launch -n swarm-manager --disk 4G
-multipass launch -n swarm-worker1 --disk 4G
-multipass launch -n swarm-worker2 --disk 4G
+multipass delete swarm-manager swarm-worker1 swarm-worker2
+multipass purge
 
-multipass.exe ls            // copier les ip des instances dans le fichier inventory.ini
+multipass launch -n swarm-manager --disk 10G
+multipass launch -n swarm-worker1 --disk 10G
+multipass launch -n swarm-worker2 --disk 10G
 
+multipass transfer ./playbook/docker-compose.yml swarm-manager:/home/ubuntu/
+
+multipass transfer -r ../http swarm-manager:/home/ubuntu/
+
+multipass transfer -r  ../db swarm-manager:/home/ubuntu/
+
+multipass ls            // copier les ip des instances dans le fichier inventory.ini
+
+docker build -t ansible-container .
 docker container run --rm -it ansible-container /bin/bash
 cat ~/.ssh/id_rsa.pub       //copier la clé ssh dans le fichier authorized_keys des instances
-nano ~/.ssh/authorized_keys
+multipass exec swarm-manager -- nano ~/.ssh/authorized_keys
+multipass exec swarm-worker1 -- nano ~/.ssh/authorized_keys
+multipass exec swarm-worker2 -- nano ~/.ssh/authorized_keys
 
 ansible-playbook -i inventory.ini playbook.yml
+
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC+qC52hpVwqtjAhLQJrIRnV8HT8XOjo58WhMStOyOfKFJ9ARem6U1t5YOMCV0CnyLnOsZUoazio44GgdedInzrPjAdf3NoPZHrhkq5VeEY+BOXoVhbfzJA7o0i1w6QBtzv+t9MewbB9tJIIY5xnaTRSVp7ufMC5RTAew50YFtdwYQDbNynnvqE/eFj8vLYQXCznnVkXKhjaiTwpvPTl5aaH/RQy9/Aw+ySvkWz8Gke+heKMEqMFGysE23eV+xqnGfaG1vHWjEm5vYSki2WsfZVYfkbK0ns0EWieEoVfYSTqsNjZv8Ik2nZPfGEZJ+cRbtXBmQPfZVqQ6rDwUJ4wnW2GpghyUogxHpFokz6e1SIdwkHOaKe7PpmsHzXq5CR79MOxSMDwXOCJzV0zokTCa6ohLYya6YppWUvyp9AYJ7wtxIkP8pqSFDL2vz6X7KqTmVQOHN0x66HherocJsFBTMhgE5AfLPWMOYEe6oOVDc4KlWzpkawNZC7SwCdHpXF2AKX9TGgg/JDpvz6Th1uzQsNkAUpX5Vm/PnD14mCQF1EDxdZ6NNPWfwbAgw+GNKzFUL1pMvISBWYfqLdGvctlDBD6WdXq84oc0R2Aqthjh+Dc27LrRCdpuaCk8C/3By+QsBC8ln5ciCG8yUh9BCEiZ6UJtu0YxFcnpZ/DLOSvVCOLQ== root@buildkitsandbox
