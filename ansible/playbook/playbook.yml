@@ -77,7 +77,7 @@
 
     - name: Copy conf directory to manager node
       copy:
-        src: /conf/
+        src: default.conf
         dest: /root/conf/
         mode: '0755'
 

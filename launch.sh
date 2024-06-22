@@ -3,6 +3,10 @@
 #copy myKey.pem dans ansible/playbooks
 cp myKey.pem ansible/playbook/myKey.pem
 
+cp -r http/conf ansible/playbook/conf
+
+cp -r db ansible/playbook/db
+
 #récupérer les variable d'environnement du fichier .env et les ajouter sur le pc
 export $(cat .env | xargs)
 
