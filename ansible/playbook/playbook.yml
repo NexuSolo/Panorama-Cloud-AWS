@@ -81,13 +81,18 @@
         dest: /root/conf/
         mode: '0755'
 
+    - name: Copy db directory to manager node
+      copy:
+        src: db-init-scripts
+        dest: /root/db/
+        mode: '0755'
+
     - name: Create a docker stack
       docker_stack:
         state: present
         name: mystack
         compose:
           - /root/docker-compose.yml
-        
 
 - name: Join workers to the swarm
   hosts: workers
@@ -99,7 +104,7 @@
 
     - name: Install packages to allow apt to use a repository over HTTPS
       apt:
-        name: 
+        name:
           - ca-certificates
           - curl
           - gnupg
@@ -127,7 +132,7 @@
 
     - name: Install Docker packages
       apt:
-        name: 
+        name:
           - docker-ce
           - docker-ce-cli
           - containerd.io
