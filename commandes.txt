@@ -1,6 +1,8 @@
+docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform init
+docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform plan  
+docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform apply 
+
 docker build -t ansible-container .
 docker container run --rm -it ansible-container /bin/bash
 
 ansible-playbook -i inventory.ini playbook.yml
-
-Vérifiez la connectivité réseau entre le nœud worker et le nœud manager. Assurez-vous que les ports nécessaires pour Docker Swarm sont ouverts et accessibles. Docker Swarm nécessite que les ports TCP 2377, TCP et UDP 7946, ainsi que UDP 4789 soient ouverts et accessibles entre les nœuds du swarm.
