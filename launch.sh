@@ -28,7 +28,4 @@ echo "host_key_checking = False" >> ansible/playbook/inventory.ini
 
 docker build -t ansible-container ./ansible
 
-docker container run --rm -it ansible-container ansible-playbook -i ansible/playbook/inventory.ini ansible/playbook/playbook.yml
-
-rm tmp/*
-
+docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
