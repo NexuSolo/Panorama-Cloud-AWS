@@ -19,7 +19,7 @@ resource "aws_instance" "app_server" {
   instance_type = "t2.micro"
   key_name      = "myKey"
 
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id, aws_security_group.allow_tcp_2377.id, aws_security_group.allow_tcp_7946.id, aws_security_group.allow_udp_7946.id, aws_security_group.allow_udp_4789.id]
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id, aws_security_group.allow_tcp_2377.id, aws_security_group.allow_tcp_7946.id, aws_security_group.allow_udp_7946.id, aws_security_group.allow_udp_4789.id, aws_security_group.allow_tcp_80.id]
 
   tags = {
     Name = "PanoramaWebM1Efrei"
