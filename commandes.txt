@@ -1,8 +1,0 @@
-docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform init
-docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform plan  
-docker container run -it --rm -v $PWD:$PWD -w $PWD hashicorp/terraform apply 
-
-docker build -t ansible-container .
-docker container run --rm -it ansible-container /bin/bash
-
-ansible-playbook -i inventory.ini playbook.yml

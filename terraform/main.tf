@@ -11,8 +11,6 @@ terraform {
 
 provider "aws" {
   region  = "eu-west-3"
-  access_key = # Remplacez <ACCESS_KEY> par votre access key
-  secret_key = # Remplace <SECRET_KEY> par votre secret key
 }
 
 resource "aws_instance" "app_server" {
@@ -53,7 +51,6 @@ resource "aws_security_group" "allow_tcp_2377" {
     name        = "allow_tcp_2377"
     description = "Allow Ansible inbound traffic"
 
-    #ports TCP 2377
     ingress {
         from_port   = 2377
         to_port     = 2377
@@ -67,7 +64,6 @@ resource "aws_security_group" "allow_tcp_7946" {
     name        = "allow_tcp_7946"
     description = "Allow Ansible inbound traffic"
 
-    #ports TCP 7946
     ingress {
         from_port   = 7946
         to_port     = 7946
@@ -81,7 +77,6 @@ resource "aws_security_group" "allow_udp_7946" {
     name        = "allow_udp_7946"
     description = "Allow Ansible inbound traffic"
 
-    #ports UDP 7946
     ingress {
         from_port   = 7946
         to_port     = 7946
@@ -95,7 +90,6 @@ resource "aws_security_group" "allow_udp_4789" {
     name        = "allow_udp_4789"
     description = "Allow Ansible inbound traffic"
 
-    #ports UDP 4789
     ingress {
         from_port   = 4789
         to_port     = 4789
