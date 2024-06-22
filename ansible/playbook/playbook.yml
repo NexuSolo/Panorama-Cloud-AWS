@@ -77,7 +77,7 @@
 
     - name: Copy conf directory to manager node
       copy:
-        src: ./conf/
+        src: /conf/
         dest: /root/conf/
         mode: '0755'
 
@@ -87,6 +87,7 @@
         name: mystack
         compose:
           - /root/docker-compose.yml
+        
 
 - name: Join workers to the swarm
   hosts: workers
