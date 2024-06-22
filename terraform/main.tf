@@ -19,7 +19,7 @@ resource "aws_instance" "app_server" {
   instance_type = "t2.micro"
   key_name      = "myKey"
 
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id, aws_security_group.allow_tcp_2377.id, aws_security_group.allow_tcp_7946.id, aws_security_group.allow_udp_7946.id, aws_security_group.allow_udp_4789.id, aws_security_group.allow_tcp_80.id]
+  vpc_security_group_ids = [aws_security_group.app_server_sg.id]
 
   tags = {
     Name = "PanoramaWebM1Efrei"
@@ -27,13 +27,48 @@ resource "aws_instance" "app_server" {
 
 }
 
-resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh"
-  description = "Allow SSH inbound traffic"
+resource "aws_security_group" "app_server_sg" {
+  name        = "app_server_sg"
+  description = "Allow necessary inbound traffic for app servers"
   
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 2377
+    to_port     = 2377
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 4789
+    to_port     = 4789
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -44,71 +79,6 @@ resource "aws_security_group" "allow_ssh" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-resource "aws_security_group" "allow_tcp_2377" {
-    name        = "allow_tcp_2377"
-    description = "Allow Ansible inbound traffic"
-
-    ingress {
-        from_port   = 2377
-        to_port     = 2377
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    
-}
-
-resource "aws_security_group" "allow_tcp_7946" {
-    name        = "allow_tcp_7946"
-    description = "Allow Ansible inbound traffic"
-
-    ingress {
-        from_port   = 7946
-        to_port     = 7946
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-}
-
-resource "aws_security_group" "allow_udp_7946" {
-    name        = "allow_udp_7946"
-    description = "Allow Ansible inbound traffic"
-
-    ingress {
-        from_port   = 7946
-        to_port     = 7946
-        protocol    = "udp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-}
-
-resource "aws_security_group" "allow_udp_4789" {
-    name        = "allow_udp_4789"
-    description = "Allow Ansible inbound traffic"
-
-    ingress {
-        from_port   = 4789
-        to_port     = 4789
-        protocol    = "udp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-}
-
-resource "aws_security_group" "allow_tcp_80" {
-    name        = "allow_tcp_80"
-    description = "Allow acces to the app server"
-
-    ingress {
-        from_port   = 80
-        to_port     = 80
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
 }
 
 output "app_server_public_dns" {
