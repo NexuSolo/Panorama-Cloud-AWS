@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #copy myKey.pem dans ansible/playbooks
-cp myKey.pem /ansible/playbook
+cp myKey.pem ansible/playbook/myKey.pem
 
 #récupérer les variable d'environnement du fichier .env et les ajouter sur le pc
 export $(cat .env | xargs)
