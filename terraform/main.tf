@@ -98,6 +98,19 @@ resource "aws_security_group" "allow_udp_4789" {
 
 }
 
+resource "aws_security_group" "allow_tcp_80" {
+    name        = "allow_tcp_80"
+    description = "Allow acces to the app server"
+
+    ingress {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+}
+
 output "app_server_public_dns" {
   value = aws_instance.app_server[*].public_dns
 }
