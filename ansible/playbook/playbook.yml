@@ -75,6 +75,12 @@
         src: docker-compose.yml
         dest: /root/docker-compose.yml
 
+    - name: Copy conf directory to manager node
+      copy:
+        src: ./conf/
+        dest: /root/conf/
+        mode: '0755'
+
     - name: Create a docker stack
       docker_stack:
         state: present
