@@ -34,3 +34,7 @@ done
 docker build -t ansible-container ./ansible
 
 docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
+
+response=$(curl -u admin:unMotDePasseSécurisé -X POST -H "Content-Type: application/json" -d '{"name":"APIKey", "role": "Admin"}' "http://{app_server_public_dns[0]}:3000/api/auth/keys")
+
+echo $response

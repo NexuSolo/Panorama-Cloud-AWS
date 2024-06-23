@@ -90,8 +90,6 @@ services:
       - prometheus
     ports:
       - 3000:3000
-    volumes:
-      - ./grafana:/var/lib/grafana
     environment:
       GF_SECURITY_ADMIN_PASSWORD: 'unMotDePasseSécurisé'
     networks:
