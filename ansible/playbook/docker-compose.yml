@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   node:
-    image: nexusolo/aws:lastest
+    image: nexusolo/aws:latest
     depends_on:
       - http
     networks:
