@@ -61,15 +61,6 @@
         name: python3-jsondiff
         state: present
 
-    - name: Initialize Docker Swarm
-      shell: docker swarm init --advertise-addr {{ aws_ip }}
-      register: swarm_init_output
-      changed_when: "'Swarm initialized' in swarm_init_output.stdout"
-
-    - name: Extract join token for workers
-      shell: docker swarm join-token worker -q
-      register: worker_join_token
-
     - name: Send docker-compose.yml to manager node
       copy:
         src: docker-compose.yml
@@ -89,9 +80,18 @@
 
     - name: Copy prometheus directory to manager node
       copy:
-        src: prometheus.yml
-        dest: /root/prometheus/prometheus.yml
+        src: prometheus
+        dest: /root
         mode: '0755'
+
+    - name: Initialize Docker Swarm
+      shell: docker swarm init --advertise-addr {{ aws_ip }}
+      register: swarm_init_output
+      changed_when: "'Swarm initialized' in swarm_init_output.stdout"
+
+    - name: Extract join token for workers
+      shell: docker swarm join-token worker -q
+      register: worker_join_token
 
     - name: Create a docker stack
       docker_stack:

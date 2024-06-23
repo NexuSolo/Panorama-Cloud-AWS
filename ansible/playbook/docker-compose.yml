@@ -47,7 +47,7 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-        
+
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -64,7 +64,26 @@ services:
         constraints: [node.role == manager]
     networks:
       - reseau
-      
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points'
+      - '^/(sys|proc|dev|host|etc)($|/)'
+    ports:
+      - 9100:9100
+    networks:
+      - reseau
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
 volumes:
   prometheus_data:
 
