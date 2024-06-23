@@ -35,6 +35,16 @@ docker build -t ansible-container ./ansible
 
 docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
 
-response=$(curl -u admin:unMotDePasseSécurisé -X POST -H "Content-Type: application/json" -d '{"name":"APIKey", "role": "Admin"}' "http://{app_server_public_dns[0]}:3000/api/auth/keys")
+response=$(curl -u admin:unMotDePasseSécurisé -X POST -H "Content-Type: application/json" -d '{"name":"APIKey", "role": "Admin"}' "http://${app_server_public_dns[0]}:3000/api/auth/keys")
 
-echo $response
+cle_grafana=$(echo $response | jq -r '.key')
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${cle_grafana}" -d '{
+  "name": "datasource",
+  "type": "prometheus",
+  "access": "proxy",
+  "url": "http://${app_server_public_dns[0]}",
+  "basicAuth": false
+}' "http://${app_server_public_dns[0]}:3000/api/datasources"
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${cle_grafana}" -d @grafana/dashboard/home.json "http://${app_server_public_dns[0]}:3000/api/dashboards/db"
