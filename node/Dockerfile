@@ -10,6 +10,6 @@ COPY src/app.js ./
 
 # RUN npm run build
 
-EXPOSE 3000
+EXPOSE 6263
 
 CMD ["npm", "start"]
