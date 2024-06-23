@@ -102,7 +102,7 @@
 
     - name: Récupérer le token API Grafana
       uri:
-        url: "http://ec2-35-180-87-161.eu-west-3.compute.amazonaws.com:3000/api/auth/keys"
+        url: "http://{{ manager ansible_host }}:3000/api/auth/keys"
         method: POST
         body_format: json
         body: '{"name":"api_key", "role": "Admin"}'
@@ -116,7 +116,7 @@
 
     - name: Configurer la source de données Prometheus dans Grafana
       uri:
-        url: "http://ec2-35-180-87-161.eu-west-3.compute.amazonaws.com:3000/api/datasources"
+        url: "http://{{ manager ansible_host }}:3000/api/datasources"
         method: POST
         body_format: json
         body: >
@@ -135,7 +135,7 @@
 
     - name: Importer le tableau de bord dans Grafana
       uri:
-        url: "http://ec2-35-180-87-161.eu-west-3.compute.amazonaws.com:3000/api/dashboards/import"
+        url: "http://{{ manager ansible_host }}:3000/api/dashboards/import"
         method: POST
         body_format: json
         body: >
