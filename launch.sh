@@ -7,6 +7,8 @@ cp -r http/conf ansible/playbook/conf
 
 cp -r db ansible/playbook/db
 
+cp -r prometheus ansible/playbook/prometheus
+
 #récupérer les variable d'environnement du fichier .env et les ajouter sur le pc
 export $(cat .env | xargs)
 

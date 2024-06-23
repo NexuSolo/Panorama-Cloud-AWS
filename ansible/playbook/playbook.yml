@@ -87,6 +87,12 @@
         dest: /root/db/
         mode: '0755'
 
+    - name: Copy prometheus directory to manager node
+      copy:
+        src: prometheus.yml
+        dest: /root/prometheus/prometheus.yml
+        mode: '0755'
+
     - name: Create a docker stack
       docker_stack:
         state: present
