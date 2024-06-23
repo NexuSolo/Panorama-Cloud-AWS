@@ -9,6 +9,8 @@ cp -r db ansible/playbook/db
 
 cp -r prometheus ansible/playbook/prometheus
 
+cp -r grafana ansible/playbook/grafana
+
 #récupérer les variable d'environnement du fichier .env et les ajouter sur le pc
 export $(cat .env | xargs)
 
@@ -22,15 +24,16 @@ app_server_public_dns=($(grep -A 2 "app_server_public_dns =" tmp/output.txt | ta
 app_server_public_ip=($(grep -A 2 "app_server_public_ip =" tmp/output.txt | tail -n 2 | awk -F '"' '{print $2}'))
 
 echo "[managers]" > ansible/playbook/inventory.ini
-echo "manager ansible_host=${app_server_public_dns[0]} aws_ip=${app_server_public_ip[0]} ansible_user=ubuntu ansible_ssh_private_key_file=myKey.pem host_key_checking=False" >> ansible/playbook/inventory.ini
+echo "manager ansible_host=${app_server_public_dns[0]} aws_ip=${app_server_public_ip[0]} ansible_user=ubuntu ansible_ssh_private_key_file=myKey.pem >> ansible/playbook/inventory.ini
 
 echo "[workers]" >> ansible/playbook/inventory.ini
 for ((i=1; i<${#app_server_public_dns[@]}; i++)); do
-    echo "worker$i ansible_host=${app_server_public_dns[$i]} aws_ip=${app_server_public_ip[$i]} ansible_user=ubuntu ansible_ssh_private_key_file=myKey.pem host_key_checking=False" >> ansible/playbook/inventory.ini
+    echo "worker$i ansible_host=${app_server_public_dns[$i]} aws_ip=${app_server_public_ip[$i]} ansible_user=ubuntu ansible_ssh_private_key_file=myKey.pem >> ansible/playbook/inventory.ini
 done
 
 echo "[defaults]" >> ansible/playbook/inventory.ini
 echo "host_key_checking = False" >> ansible/playbook/inventory.ini
+echo "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ansible/playbook/inventory.ini
 
 docker build -t ansible-container ./ansible
 
