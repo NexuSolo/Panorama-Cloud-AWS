@@ -91,7 +91,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - grafana_data:/var/lib/grafana
+      - ./dashboard:/var/lib/grafana
     environment:
       GF_SECURITY_ADMIN_PASSWORD: 'unMotDePasseSécurisé'
     networks:
@@ -99,7 +99,6 @@ services:
 
 volumes:
   prometheus_data:
-  grafana_data:
 
 networks:
   reseau:
