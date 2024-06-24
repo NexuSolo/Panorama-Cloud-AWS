@@ -10,12 +10,12 @@ RUN pip install ansible
 
 RUN pip install boto3 boto jsondiff
 
-# Générer une paire de clés SSH sans passphrase
+RUN ansible-galaxy collection install community.grafana
+
 RUN ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
 
 WORKDIR /playbooks
 
-# Copier les fichiers de playbook dans le conteneur
 COPY playbook/* ./
 
 RUN chmod 400 myKey.pem
