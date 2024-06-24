@@ -111,12 +111,12 @@
         name: Prometheus
         ds_type: prometheus
         ds_url: https://prometheus:9090
-        url: http://grafana:3000
+        url: http://{{ ansible_host }}:3000
 
     - name: create grafana dashboard
       community.grafana.grafana_dashboard:
         name: My Dashboard
-        grafana_url: http://grafana:3000
+        grafana_url: http://{{ ansible_host }}:3000
         dashboard_url: /root/grafana/dashboard/dashboard.json
 
 - name: Join workers to the swarm
