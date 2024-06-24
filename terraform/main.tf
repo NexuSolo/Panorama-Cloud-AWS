@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  count = 2
+  count = var.aws_instance_number
   ami           = "ami-00ac45f3035ff009e"
   instance_type = "t2.micro"
   key_name      = "myKey"
@@ -99,6 +99,15 @@ resource "aws_security_group" "app_server_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+variable "aws_instance_number" {
+  type = number
+  default = 1
+  validation {
+    condition = var.aws_instance_number > 1
+    error_message = "The number of instances must be greater than 1"
   }
 }
 

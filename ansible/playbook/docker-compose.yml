@@ -10,7 +10,7 @@ services:
     ports :
       - 6263:6263
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
     labels:
@@ -27,7 +27,7 @@ services:
     networks:
       - reseau
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
 
@@ -44,7 +44,7 @@ services:
     networks:
       - reseau
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
 
