@@ -3,7 +3,7 @@
 #copy myKey.pem dans ansible/playbooks
 cp myKey.pem ansible/playbook/myKey.pem
 
-AWS_INSTANCE_NUMBER=1 #default value
+AWS_INSTANCE_NUMBER=2 #default value
 
 cp -r http/conf ansible/playbook/conf
 
@@ -35,4 +35,4 @@ done
 
 docker build -t ansible-container ./ansible
 
-docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
+docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml -vvv

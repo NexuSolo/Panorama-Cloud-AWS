@@ -106,19 +106,6 @@
         compose:
           - /root/docker-compose.yml
 
-    - name: create prometheus datasource
-      community.grafana.grafana_datasource:
-        name: Prometheus
-        ds_type: prometheus
-        ds_url: https://prometheus:9090
-        url: http://{{ ansible_host }}:3000
-
-    - name: create grafana dashboard
-      community.grafana.grafana_dashboard:
-        name: My Dashboard
-        grafana_url: http://{{ ansible_host }}:3000
-        dashboard_url: /root/grafana/dashboard/dashboard.json
-
 - name: Join workers to the swarm
   hosts: workers
   become: yes
@@ -174,3 +161,39 @@
     - name: Join Docker Swarm as worker
       shell: docker swarm join --token {{ hostvars['manager']['worker_join_token'].stdout }} {{ hostvars['manager']['aws_ip'] }}:2377
       when: hostvars['manager']['worker_join_token'].stdout != ""
+
+- name: Setup monitoring
+  hosts: managers
+  become: yes
+  tasks:
+    - name: Vérifier l'accès à Grafana
+      uri:
+        url: "http://{{ ansible_host }}:3000"
+        method: GET
+        status_code: 200
+        timeout: 5 # Temps d'attente pour la réponse de chaque tentative
+      register: grafana_access
+      until: grafana_access is succeeded
+      retries: 4 # Nombre total d'essais = 4 (y compris l'essai initial), donc 3 reprises
+      delay: 5 # Délai entre les essais en secondes
+      ignore_errors: yes
+
+    - name: Afficher un message si Grafana n'est pas accessible
+      debug:
+        msg: "L'accès à Grafana a échoué après plusieurs tentatives, vérifiez que Grafana est en cours d'exécution et accessible."
+      when: grafana_access is failed
+
+    - name: create prometheus datasource
+      community.grafana.grafana_datasource:
+        name: Prometheus
+        ds_type: prometheus
+        ds_url: http://prometheus:9090
+        url: http://{{ ansible_host }}:3000
+      when: grafana_access is succeeded
+
+    - name: create grafana dashboard
+      community.grafana.grafana_dashboard:
+        grafana_url: http://{{ ansible_host }}:3000
+        dashboard_url: https://grafana.com/api/dashboards/1860/revisions/37/download
+        overwrite: true
+      when: grafana_access is succeeded

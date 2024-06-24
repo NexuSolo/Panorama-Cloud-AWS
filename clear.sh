@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AWS_INSTANCE_NUMBER=1 #default value
+AWS_INSTANCE_NUMBER=2 #default value
 
 export $(cat .env | xargs)
 
