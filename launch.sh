@@ -44,7 +44,7 @@ fi
 echo "Préparation à l'exécution de Terraform..."
 echo "-------------------------------------------"
 echo "Étape 6: Initialisation de Terraform..."
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform init
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_region=$AWS_REGION hashicorp/terraform init
 if [ $? -eq 0 ]; then
     echo "Terraform initialisé avec succès."
 else
@@ -54,14 +54,14 @@ fi
 
 
 echo "Étape 7: Planification de Terraform..."
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform plan
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_region=$AWS_REGION hashicorp/terraform plan
 if [ $? -ne 0 ]; then
     echo "Échec de la planification de Terraform."
     exit 1
 fi
 
 echo "Étape 8: Application de Terraform..."
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform apply -auto-approve > tmp/output.txt
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_region=$AWS_REGION hashicorp/terraform apply -auto-approve > tmp/output.txt
 if [ $? -ne 0 ]; then
     echo "Échec de l'application de Terraform."
     exit 1
