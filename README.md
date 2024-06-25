@@ -16,6 +16,7 @@ Cloner le projet
 
 ```bash
 git clone https://github.com/NexuSolo/Panorama-Cloud-AWS.git
+cd Panorama-Cloud-AWS
 ```
 
 Configurer les variables d'environnement (voir section variables d'environnement)
@@ -34,7 +35,7 @@ sudo chmod 400 myKey.pem
 Ajouter les droits d'execution a launch.sh et clear.sh
 
 ```bash
-sudo chmod +x launch.sh
+sudo chmod +x launch.sh clear.sh
 ```
 
 Lancer le script launch.sh
@@ -64,6 +65,20 @@ Pour lancer le projet, vous aurez besoin de définir les variables d'environneme
 ## Fonctionnalité
 
 ## Problemès connus
+
+Message d'erreur qui apparait lors du chargement de la partie Ansible
+
+```bash :
+=> ERROR [1/9] FROM docker.io/library/python:3.11@sha256:3293c1c51267035cc7dbde027740c9b03affb5e8cff6220d30b7c970e39b1406
+```
+
+Le pull de l'image python:3.11 peut ne pas fonctionner correctement, dans ce cas il est possible de la télécharger manuellement avec la commande suivante puis relancer le script launch.sh
+
+```bash
+docker pull python:3.11
+```
+
+
 
 ## Autheurs
 
