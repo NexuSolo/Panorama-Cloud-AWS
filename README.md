@@ -10,6 +10,10 @@ Ce projet a pour but d'automatiser le déploiement d'un projet web grace a plusi
 - **Docker Swarm** pour la scalabilité de l'application
 - **Prometheus** et **Grafana** pour le monitoring
 
+## Prérequis
+
+- [Docker](https://docs.docker.com/engine/install/ubuntu/)
+
 ## Installation
 
 Cloner le projet 
