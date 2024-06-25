@@ -63,9 +63,11 @@ fi
 echo "Étape 8: Application de Terraform..."
 docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_region=$AWS_REGION hashicorp/terraform apply -auto-approve > tmp/output.txt
 if [ $? -ne 0 ]; then
+cat tmp/output.txt
     echo "Échec de l'application de Terraform."
     exit 1
 else
+    cat tmp/output.txt
     echo "Terraform appliqué avec succès."
 fi
 

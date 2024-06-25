@@ -86,7 +86,28 @@ Pour lancer le projet, vous aurez besoin de définir les variables d'environneme
 
 ## Problemès connus
 
-Message d'erreur qui apparait lors du chargement de la partie Ansible
+Message d'erreur qui apparait lors du du terraform apply :
+
+```bash
+aws_security_group.app_server_sg: Creation complete after 2s [id=sg-0dbe2b78059188305]
+aws_instance.app_server[1]: Creating...
+aws_instance.app_server[2]: Creating...
+aws_instance.app_server[0]: Creating...
+╷
+│ Error: creating EC2 Instance: InvalidAMIID.NotFound: The image id '[ami-00ac45f3035ff009e]' does not exist
+│       status code: 400, request id: d05f4214-0a7b-4570-93b9-3a262ae80927
+│
+│   with aws_instance.app_server[2],
+│   on main.tf line 16, in resource "aws_instance" "app_server":
+│   16: resource "aws_instance" "app_server" {
+│
+```
+
+Vérifier la region AWS dans le .env
+
+-------------------
+
+Message d'erreur qui apparait lors du chargement de la partie Ansible :
 
 ```bash :
 => ERROR [1/9] FROM docker.io/library/python:3.11@sha256:3293c1c51267035cc7dbde027740c9b03affb5e8cff6220d30b7c970e39b1406
@@ -100,7 +121,7 @@ docker pull python:3.11
 
 -------------------
 
-Message d'erreur qui apparait lors de l'execution du playbook Ansible:
+Message d'erreur qui apparait lors de l'execution du playbook Ansible :
 
 ```bash
 
