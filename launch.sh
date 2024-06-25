@@ -97,6 +97,7 @@ echo "-------------------------------------------------"
 docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
 if [ $? -ne 0 ]; then
     echo "La première tentative a échoué, tentative de relance..."
+    sleep 5
     docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
     if [ $? -ne 0 ]; then
         echo "Échec de l'exécution du playbook Ansible après deux tentatives."
@@ -110,4 +111,4 @@ echo "Déploiement terminé avec succès."
 
 echo "L'adresse IP de l'instance manager est : ${app_server_public_ip[0]}"
 
-echo "Pour accéder à l'application de monitoring Prometheus, veuillez visiter http://${app_server_public_dns[0]}:9090 les identifiants sont : admin/admin"
+echo "Pour accéder à l'application de monitoring Prometheus, veuillez visiter http://${app_server_public_ip[0]}:3000 les identifiants sont : admin/admin"
