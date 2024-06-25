@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "eu-west-3"
+  region  = "aws_region"
 }
 
 resource "aws_instance" "app_server" {
@@ -31,6 +31,7 @@ resource "aws_security_group" "app_server_sg" {
   name        = "app_server_sg"
   description = "Allow necessary inbound traffic for app servers"
   
+  #SSH
   ingress {
     from_port   = 22
     to_port     = 22
@@ -38,6 +39,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+#Docker Swarm
   ingress {
     from_port   = 2377
     to_port     = 2377
@@ -45,6 +47,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+#Docker Swarm
   ingress {
     from_port   = 7946
     to_port     = 7946
@@ -52,6 +55,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+#Docker Swarm
   ingress {
     from_port   = 7946
     to_port     = 7946
@@ -59,6 +63,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+#Docker Swarm
   ingress {
     from_port   = 4789
     to_port     = 4789
@@ -66,6 +71,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+#HTTP
   ingress {
     from_port   = 80
     to_port     = 80
@@ -73,20 +79,7 @@ resource "aws_security_group" "app_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 9090
-    to_port     = 9090
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 9100
-    to_port     = 9100
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+#Grafana
   ingress {
     from_port   = 3000
     to_port     = 3000
@@ -109,6 +102,11 @@ variable "aws_instance_number" {
     condition = var.aws_instance_number > 1
     error_message = "The number of instances must be greater than 1"
   }
+}
+
+variable "aws_region" {
+  type = string
+  default = "eu-west-3"
 }
 
 output "app_server_public_dns" {

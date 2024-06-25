@@ -12,8 +12,6 @@ RUN pip install boto3 boto jsondiff
 
 RUN ansible-galaxy collection install community.grafana
 
-RUN ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
-
 WORKDIR /playbooks
 
 COPY playbook/* ./

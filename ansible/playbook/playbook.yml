@@ -84,12 +84,6 @@
         dest: /root
         mode: '0755'
 
-    - name: Copy grafana directory to manager node
-      copy:
-        src: grafana
-        dest: /root
-        mode: '0755'
-
     - name: Initialize Docker Swarm
       shell: docker swarm init --advertise-addr {{ aws_ip }}
       register: swarm_init_output

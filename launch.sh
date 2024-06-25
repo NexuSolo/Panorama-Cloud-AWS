@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#copy myKey.pem dans ansible/playbooks
 cp myKey.pem ansible/playbook/myKey.pem
 
 AWS_INSTANCE_NUMBER=2 #default value
@@ -11,18 +10,18 @@ cp -r db ansible/playbook/db
 
 cp -r prometheus ansible/playbook/prometheus
 
-cp -r grafana ansible/playbook/grafana
-
-#récupérer les variable d'environnement du fichier .env et les ajouter sur le pc
 export $(cat .env | xargs)
 
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER hashicorp/terraform init
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER hashicorp/terraform plan
-docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER hashicorp/terraform apply -auto-approve > tmp/output.txt
+# Exécute le script Terraform
 
-# Extraire les valeurs de app_server_public_dns
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform init
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform plan
+# Exécute le script Terraform et redirige la sortie vers un fichier temporaire
+docker container run -it --rm -v $PWD/terraform:$PWD/terraform -w $PWD/terraform -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e TF_VAR_aws_instance_number=$AWS_INSTANCE_NUMBER -e TF_VAR_aws_aws_region=$AWS_REGION hashicorp/terraform apply -auto-approve > tmp/output.txt
+
+#generate inventory.ini
+
 app_server_public_dns=($(grep -A $AWS_INSTANCE_NUMBER "app_server_public_dns =" tmp/output.txt | tail -n $AWS_INSTANCE_NUMBER | awk -F '"' '{print $2}'))
-# Extraire les valeurs de app_server_public_ip
 app_server_public_ip=($(grep -A $AWS_INSTANCE_NUMBER "app_server_public_ip =" tmp/output.txt | tail -n $AWS_INSTANCE_NUMBER | awk -F '"' '{print $2}'))
 
 echo "[managers]" > ansible/playbook/inventory.ini
@@ -35,4 +34,12 @@ done
 
 docker build -t ansible-container ./ansible
 
-docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml -vvv
+# Exécute le playbook Ansible
+docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
+
+# Vérifie si la commande a échoué
+if [ $? -ne 0 ]; then
+    echo "La première tentative a échoué, tentative de relance..."
+    # Tente d'exécuter la commande une seconde fois
+    docker container run --rm -it ansible-container ansible-playbook -i inventory.ini playbook.yml
+fi
