@@ -103,7 +103,7 @@ aws_instance.app_server[0]: Creating...
 │
 ```
 
-Vérifier la region AWS dans le .env
+Vérifier la region AWS dans le .env. Attention si vous changer la region il faut changer l'ami dans le terraform/main.tf
 
 -------------------
 
